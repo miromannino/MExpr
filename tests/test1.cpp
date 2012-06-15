@@ -98,7 +98,7 @@ int main(int argc, char** argv){
 		cout << "Err: " << ex.what() << endl;
 	}
 
-	//e->compile();
+	e->compile();
 	cout << "Compiled Expression Code:" << endl;
 	s = e->getExprCodeString(); //if you have not compiled s will be NULL
 	if(s != NULL){

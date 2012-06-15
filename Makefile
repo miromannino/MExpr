@@ -97,10 +97,12 @@ clean:
 	rm -f test1 test2
 
 install: $(Objs)
-ifeq ($(OperatingSystem), MacOS)	
+ifeq ($(OperatingSystem), MacOS)
 	cp libmexpr.so /usr/local/lib/
+	cp include/* /usr/local/include
 else
 	cp libmexpr.so.1.0 /usr/local/lib
 	ln -sf /usr/local/lib/libmexpr.so.1.0 /usr/local/lib/libmexpr.so
 	ln -sf /usr/local/lib/libmexpr.so.1.0 /usr/local/lib/libmexpr.so.1
+	cp include/* /usr/local/include
 endif
