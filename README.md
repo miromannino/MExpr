@@ -1,51 +1,53 @@
 MExpr
 =====
 
-Library that parse mathematical expression with implicit multiplications.
+Library that parses mathematical expressions with implicit multiplications.
 
-The library use bison and flex to parse a string that represent a mathematical expression. The parser was made to manage complex expression like this:
+The library uses bison and flex to parse a string that represents a mathematical expression. The parser was made to manage complex expressions like this:
 
 	_sum(2+2yx^2, -735)-3(_sum(1,2) + _sum(1,2,3))(-5x)
 	
 	
-###Implicit multiplication
+###Implicit multiplications
 
-As you can see it use implicit multiplications, if you write `xy` the parser understands that you want multiply two variables `x` and `y`. But is not the only case where you can have an implicit multiplication, there are some examples:
+If you write `xy`, the parser understands that you want to multiply two variables: `x` and `y`. But this is not the only case where you can have an implicit multiplication, there are some other examples:
 
 	-3xy^2
 	(3+3)(5-3)
 	-(3-2)
 	
-But for this reason, you can't use variables that have more of a single character, because if you write `xy` the parser can't distinguishes if it is the variable `xy` or if it is `x * y`. In the future I write something to support multi-character variables, using some special symbols.
+But for this reason, you can't use variables that have more than a single character. Infact, if you write `xy`, the parser can't distinguish between the variable `xy` and the multiplication `x * y`. In the future, I'll write something to support multi-character variables, using some special symbols.
 
 
 ###Functions
 
-Another problems is that if you write `f(x)` the parser can't distinguishes if it is a function `f` called with the `x` argument, or if it is a variable `f` that multiply the `(x)` expression. For this reason the functions always start with the `_` character. Now, `_f(x)` calls the `f` function and `f(x)` is a multiplication between the `f` and `x` variables.
+Another problems, is that if you write `f(x)` the parser can't distinguish between the function `f` called with the `x` argument and the variable `f` that multiplies the `(x)` expression. For this reason, the functions always start with the `_` character. Now, `_f(x)` calls the `f` function and `f(x)` is a multiplication between the `f` and `x` variables.
 
-The function can have more than one argument. For example you can define the function `_sum(a,b)` that sum two number. But you can define `_sum(a,b,c)` too, at the same time. In fact, the parser can manages overloaded function distinguishing the two function from the number of arguments.
+The function can have more than one argument. For example, you can define the function `_sum(a,b)` that adds two numbers. Furthermore, you can define `_sum(a,b,c)` too, that adds three numbers. In fact, the parser can manage overloaded functions distinguishing the two functions from the number of arguments.
 
 
 ###Environment
 
-The Environment maintains the value associated to a variable symbol, and the pointer to a function associated to a function symbol. The Environment is dynamic, you may have a parsed expression that use the `_foo` function, but it has never been define. If you try to evaluate this expression, the interpreter give you an exception. Then, if you define the `_foo` function, you can evaluate the expression without any problem. Also, you can redefine function, or change the value of a defined variable. 
+The Environment maintains the value associated to a variable symbol. Moreover, it maintains the pointer to a function associated to a function symbol. The Environment is dynamic, you may have a parsed expression that uses the `_foo` function, but it has never been defined. If you try to evaluate this expression, the interpreter gives you an exception. Then, if you define the `_foo` function, you can evaluate the expression without any problem. Also, you can redefine a defined function, or change the value of a defined variable. 
 
 
 ###STDFunctions
 
-The library has a set of standard functions that you can use in your expression, the standard function is the same of the math.h library.
+The library has a set of standard functions that you can use in your expressions. This functions are the same of the math.h library.
 
 For example:
 
 	_sqrt(_floor(_exp(5)))
 	
+uses the math.h functions: `sqrt`, `floor` and `exp`.
+
 The standard constants (like `pi` and `e`) will be introduced with the multiple-character variables.
 
 
 How it works
 ------------
 
-The library parse the input string and builds an AST Tree, for example the `-3xy^2` build this tree:
+The library parses the input string, then it builds an AST Tree. For example the `-3xy^2` builds this tree:
 
 	[ * ]─[ -1 ]
   	  └───[ * ]─[ 3 ]
@@ -53,9 +55,9 @@ The library parse the input string and builds an AST Tree, for example the `-3xy
           	      └───[ ^ ]─[ y ]
               	        └───[ 2 ]
 
-Now, the library can evaluate the expression using the tree, it simply recursively navigate this tree.
+Now, the library can evaluate the expression using the tree. This is done recursively browsing this tree.
 
-In some case, for example when you must draw a function plot, you need to evaluate the same expression changing only the value of a variable. For this reason the library can "compile" the AST Tree to have a more efficient representation of the expression. The generated code is a simple bytecode that use a stack to compute operations.
+In some cases, for example when you want to draw a plot, you need to evaluate the same expression changing only the value of a variable. For this reason, the library can "compiles" the AST Tree to have a more efficient representation of the expression. The generated code is a simple bytecode, that uses a stack to compute operations.
 
 This is the representation of the bytecode generated using the previous expression:
 
@@ -69,20 +71,20 @@ This is the representation of the bytecode generated using the previous expressi
 	MUL
 	MUL
 
-###Function and variables
+###Functions and variables
 
-The Environment has two maps, the variables and the functions is stored in these map. 
-After the expression is parsed, the AST Tree (and the code too) contains the name of the variable (or the name of the function) and not its value. On the contrary, in the evaluation phase the environment is interrogated to get the values and the function pointers.
+The Environment has two maps, the variables and the functions is stored in these maps. 
+After that the expression is parsed, the AST Tree (and the code too) contains the name of the variables (or the name of the functions) and not their values. On the contrary, in the evaluation phase the environment is questioned to get the values and the function pointers.
 
-To distinguish the function with the same name, but different number of arguments, the function `_foo` with one argument is internally called `_foo_1` and the other function, with the same name but with two arguments, is internally called `_foo_2`.
+To distinguish the functions with the same name, but different number of arguments, the environment uses different names. For example, the function `_foo` with one argument is internally called `_foo_1`, the other function, with the same name but with two arguments, is internally called `_foo_2`.
 
 
 How to use it
 -------------
 
-The Makefile is configured to create a shared library, you can use it with your C++ programs linking dynamically this library.
+The Makefile is configured to create a shared library, you can use it with your C++ programs dynamically linking this library.
 
-Let's see an example of a little program that use it:
+Let's me show an example of a little program that use it:
 
 	#include <iostream>
 	#include <MExpr.h>
@@ -205,8 +207,8 @@ How to compile
  
 ###Common issues
 
- - In Mac OS X, by default, doesn't have the `/usr/local` folder, check this one if the installation have some problems.
- - You can have some problem compiling your examples if you don't install it before, if you don't want to install it ensure that the `DYLD_LIBRARY_PATH` (or the `LD_LIBRARY_PATH`) was proudly configured.
+ - Mac OS X, by default, doesn't have the `/usr/local/lib` and `/usr/local/include` folders, check if you have this one.
+ - You can have some problems compiling your examples if you don't install it before. If you don't want to install it, ensure that the `DYLD_LIBRARY_PATH` (or the `LD_LIBRARY_PATH`) was proudly configured.
 
 
 Requirements
