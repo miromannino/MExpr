@@ -284,7 +284,7 @@ expr:
 						}
 						
 |	tADD atomicExpr %prec tPREADD		{	
-											$$ = $2
+											$$ = $2;
 										}
 
 |	tSUB atomicExpr %prec tPREADD		{	
