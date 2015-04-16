@@ -215,3 +215,7 @@ After that the expression is parsed, the AST Tree (and the code too) contains th
 
 <p>Now, the library is done to work with Mac OSX an Linux.
 To compile the library you need: bison, flex and g++.</p>
+
+<h2>License</h2>
+
+This project is licensed under the MIT license
