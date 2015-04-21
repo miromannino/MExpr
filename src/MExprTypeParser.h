@@ -33,12 +33,12 @@
 #include <MExprAST.h>
 
 /** structure used by flex and bison */
-typedef union MExpr_UnionTypeParser{
-	MExpr::ASTNode* exprNode;
-	MExpr::ValueType value;
-	char var;
-	std::string* func;
-	unsigned int numArgs;
+typedef union MExpr_UnionTypeParser {
+    MExpr::ASTNode* exprNode;
+    MExpr::ValueType value;
+    char var;
+    std::string* func;
+    unsigned int numArgs;
 } MExpr_TypeParser;
 
 /** define the type for flex and bison */

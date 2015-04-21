@@ -1,4 +1,4 @@
-#============================================================================================================
+# =======================================================================================
 # Mathematical Expressions Makefile
 #
 # Copyright (c) 2012 Miro Mannino
@@ -21,102 +21,173 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
-#============================================================================================================
+# =======================================================================================
 
-#Preferences
-#------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------
+# Preferences
+# ---------------------------------------------------------------------------------------
 
-#Choose MacOS or Linux
-OperatingSystem=Linux
+# Choose MacOS or Linux
+OperatingSystem=MacOS
 
-#------------------------------------------------------------------------------------------------------------
+# Build folder
+BuildFolder=build
 
-all: bisonFiles libmexpr tests
+# Generated files folder
+GenFilesFolder=$(BuildFolder)/gen-files
 
-#Library------------------------------------------------------
+# Objs folder
+ObjsFolder=$(BuildFolder)/objs
 
-libmexpr: libmexpr.so
-bisonFiles: src/MExprLexer.cpp src/MExprLexer.h src/MExprParser.cpp src/MExprParser.h
+# Src folder
+SrcFolder=src
 
-Objs= MExprStdFunc.o \
-	  MExprError.o \
-	  MExprAST.o \
-	  MExprLexer.o \
-	  MExprParser.o \
-	  MExprExpression.o \
-	  MExprCode.o \
-	  MExprEnvironment.o
+# Include folder
+IncludeFolder=include
 
-libmexpr.so: $(Objs)
+# Tests folder
+TestsFolder=tests
+
+
+
+# =======================================================================================
+
+
+# ---------------------------------------------------------------------------------------
+# All
+# ---------------------------------------------------------------------------------------
+
+all: lexer parser libmexpr tests
+
+
+# ---------------------------------------------------------------------------------------
+# Out folder
+# ---------------------------------------------------------------------------------------
+
+$(BuildFolder): 
+	if [ ! -d $(BuildFolder) ]; then mkdir $(BuildFolder) ; fi
+
+$(ObjsFolder): $(BuildFolder) 
+	if [ ! -d $(ObjsFolder) ]; then mkdir $(ObjsFolder) ; fi
+
+$(GenFilesFolder): $(BuildFolder) 
+	if [ ! -d $(GenFilesFolder) ]; then mkdir $(GenFilesFolder) ; fi
+
+
+# ---------------------------------------------------------------------------------------
+# Lexer
+# ---------------------------------------------------------------------------------------
+
+lexer: $(GenFilesFolder)/MExprLexer.cpp $(GenFilesFolder)/MExprLexer.h
+
+$(GenFilesFolder)/MExprLexer.cpp $(GenFilesFolder)/MExprLexer.h: $(GenFilesFolder) $(SrcFolder)/MExprLexer.l $(SrcFolder)/MExprTypeParser.h $(GenFilesFolder)/MExprParser.h
+	flex --outfile=$(GenFilesFolder)/MExprLexer.cpp --prefix="MExpr_" --header-file=$(GenFilesFolder)/MExprLexer.h $(SrcFolder)/MExprLexer.l
+
+
+# ---------------------------------------------------------------------------------------
+# Parser
+# ---------------------------------------------------------------------------------------
+
+parser: $(GenFilesFolder)/MExprParser.cpp $(GenFilesFolder)/MExprParser.h
+
+$(GenFilesFolder)/MExprParser.cpp $(GenFilesFolder)/MExprParser.h: $(GenFilesFolder) $(SrcFolder)/MExprParser.y $(SrcFolder)/MExprParserParam.h $(SrcFolder)/MExprTypeParser.h
+	bison --output=$(GenFilesFolder)/MExprParser.cpp --name-prefix="MExpr_" --defines=$(GenFilesFolder)/MExprParser.h $(SrcFolder)/MExprParser.y
+
+
+# ---------------------------------------------------------------------------------------
+# Library
+# ---------------------------------------------------------------------------------------
+
+libmexpr: $(BuildFolder)/libmexpr.so
+
+Objs= $(ObjsFolder)/MExprStdFunc.o \
+	  $(ObjsFolder)/MExprError.o \
+	  $(ObjsFolder)/MExprAST.o \
+	  $(ObjsFolder)/MExprLexer.o \
+	  $(ObjsFolder)/MExprParser.o \
+	  $(ObjsFolder)/MExprExpression.o \
+	  $(ObjsFolder)/MExprCode.o \
+	  $(ObjsFolder)/MExprEnvironment.o
+
+$(BuildFolder)/libmexpr.so: $(BuildFolder) $(Objs)
 ifeq ($(OperatingSystem), MacOS)	
 	g++ -lm -dynamiclib -o libmexpr.so $(Objs)
+	mv libmexpr.so $(BuildFolder)/ 
 else
 	g++ -shared -Wl,-soname,libmexpr.so.1 -o libmexpr.so.1.0 $(Objs)
 	cp libmexpr.so.1.0 libmexpr.so
 	cp libmexpr.so.1.0 libmexpr.so.1
+	mv libmexpr.so $(BuildFolder)/
+	mv libmexpr.so.1 $(BuildFolder)/
 endif
 
-MExprEnvironment.o: src/MExprEnvironment.cpp include/MExprEnvironment.h
-	g++ -c -Isrc -Iinclude -O2 -o MExprEnvironment.o src/MExprEnvironment.cpp
-	
-MExprExpression.o: src/MExprExpression.cpp include/MExprExpression.h include/MExprInstruction.h src/MExprStdFunc.h
-	g++ -c -Isrc -Iinclude -O2 -o MExprExpression.o src/MExprExpression.cpp
-	
-MExprError.o: src/MExprError.cpp include/MExprError.h
-	g++ -c -Isrc -Iinclude -O2 -o MExprError.o src/MExprError.cpp
+Includes=-Isrc -Iinclude -I$(GenFilesFolder)
 
-MExprStdFunc.o: src/MExprStdFunc.cpp src/MExprStdFunc.h
-	g++ -c -Isrc -Iinclude -O2 -o MExprStdFunc.o src/MExprStdFunc.cpp
+$(ObjsFolder)/MExprEnvironment.o: $(ObjsFolder) $(SrcFolder)/MExprEnvironment.cpp $(IncludeFolder)/MExprEnvironment.h
+	g++ -c $(Includes) -O2 -o $(ObjsFolder)/MExprEnvironment.o $(SrcFolder)/MExprEnvironment.cpp
 
-MExprAST.o: src/MExprAST.cpp include/MExprAST.h
-	g++ -c -Isrc -Iinclude -O2 -o MExprAST.o src/MExprAST.cpp
-		
-MExprCode.o: src/MExprCode.cpp include/MExprCode.h
-	g++ -c -Isrc -Iinclude -O2 -o MExprCode.o src/MExprCode.cpp
+$(ObjsFolder)/MExprExpression.o: $(ObjsFolder) $(SrcFolder)/MExprExpression.cpp $(IncludeFolder)/MExprExpression.h $(IncludeFolder)/MExprInstruction.h $(SrcFolder)/MExprStdFunc.h
+	g++ -c $(Includes) -O2 -o $(ObjsFolder)/MExprExpression.o $(SrcFolder)/MExprExpression.cpp
 
-MExprLexer.o: src/MExprLexer.cpp
-	g++ -c -Isrc -Iinclude -O2 -o MExprLexer.o src/MExprLexer.cpp
+$(ObjsFolder)/MExprError.o: $(ObjsFolder) $(SrcFolder)/MExprError.cpp $(IncludeFolder)/MExprError.h
+	g++ -c $(Includes) -O2 -o $(ObjsFolder)/MExprError.o $(SrcFolder)/MExprError.cpp
 
-src/MExprLexer.cpp src/MExprLexer.h: src/MExprLexer.l  src/MExprTypeParser.h src/MExprParser.h
-	flex --outfile=src/MExprLexer.cpp --prefix="MExpr_" --header-file=src/MExprLexer.h src/MExprLexer.l
+$(ObjsFolder)/MExprStdFunc.o: $(ObjsFolder) $(SrcFolder)/MExprStdFunc.cpp $(SrcFolder)/MExprStdFunc.h
+	g++ -c $(Includes) -O2 -o $(ObjsFolder)/MExprStdFunc.o $(SrcFolder)/MExprStdFunc.cpp
 
-MExprParser.o: src/MExprParser.cpp
-	g++ -c -Isrc -Iinclude -O2 -o MExprParser.o src/MExprParser.cpp
-	
-src/MExprParser.cpp src/MExprParser.h: src/MExprParser.y src/MExprParserParam.h src/MExprTypeParser.h
-	bison --output=src/MExprParser.cpp --name-prefix="MExpr_" --defines=src/MExprParser.h src/MExprParser.y
+$(ObjsFolder)/MExprAST.o: $(ObjsFolder) $(SrcFolder)/MExprAST.cpp $(IncludeFolder)/MExprAST.h
+	g++ -c $(Includes) -O2 -o $(ObjsFolder)/MExprAST.o $(SrcFolder)/MExprAST.cpp
 
-#Tests--------------------------------------------------------
+$(ObjsFolder)/MExprCode.o: $(ObjsFolder) $(SrcFolder)/MExprCode.cpp $(IncludeFolder)/MExprCode.h
+	g++ -c $(Includes) -O2 -o $(ObjsFolder)/MExprCode.o $(SrcFolder)/MExprCode.cpp
 
-tests: test1 test2
+$(ObjsFolder)/MExprLexer.o: lexer
+	g++ -c $(Includes) -O2 -o $(ObjsFolder)/MExprLexer.o $(GenFilesFolder)/MExprLexer.cpp
 
-test1: test1.o
-	g++ -Iinclude -L. -o test1 test1.o -lmexpr
+$(ObjsFolder)/MExprParser.o: parser
+	g++ -c $(Includes) -O2 -o $(ObjsFolder)/MExprParser.o $(GenFilesFolder)/MExprParser.cpp
 
-test1.o : tests/test1.cpp
-	g++ -c -Iinclude -o test1.o tests/test1.cpp
-	
-test2: test2.o
-	g++ -Iinclude -L. -o test2 test2.o -lmexpr
 
-test2.o : tests/test2.cpp
-	g++ -c -Iinclude -o test2.o tests/test2.cpp
+# ---------------------------------------------------------------------------------------
+# Tests
+# ---------------------------------------------------------------------------------------
 
-#Clean
+tests: $(BuildFolder)/test1 $(BuildFolder)/test2
+
+TestIncludes=-Iinclude
+
+$(BuildFolder)/test1: $(ObjsFolder)/test1.o
+	g++ $(TestIncludes) -L$(BuildFolder) -lmexpr -o $(BuildFolder)/test1 $(ObjsFolder)/test1.o 
+
+$(ObjsFolder)/test1.o : $(TestsFolder)/test1.cpp
+	g++ -c $(TestIncludes) -o $(ObjsFolder)/test1.o $(TestsFolder)/test1.cpp
+
+$(BuildFolder)/test2: $(ObjsFolder)/test2.o
+	g++ $(TestIncludes) -L$(BuildFolder) -lmexpr -o $(BuildFolder)/test2 $(ObjsFolder)/test2.o 
+
+$(ObjsFolder)/test2.o : $(TestsFolder)/test2.cpp
+	g++ -c $(TestIncludes) -o $(ObjsFolder)/test2.o $(TestsFolder)/test2.cpp
+
+
+# ---------------------------------------------------------------------------------------
+# Clean
+# ---------------------------------------------------------------------------------------
 
 clean:
-	rm -f libmexpr.so*
-	rm -f src/MExprParser.cpp src/MExprLexer.cpp src/MExprParser.h src/MExprLexer.h
-	rm -f *.o
-	rm -f test1 test2
+	rm -rf $(BuildFolder)
+
+
+# ---------------------------------------------------------------------------------------
+# Install
+# ---------------------------------------------------------------------------------------
 
 install: $(Objs)
 ifeq ($(OperatingSystem), MacOS)
-	cp libmexpr.so /usr/local/lib/
-	cp include/* /usr/local/include
+	cp $(BuildFolder)/libmexpr.so /usr/local/lib/
+	cp $(IncludeFolder)/* /usr/local/include
 else
-	cp libmexpr.so.1.0 /usr/local/lib
+	cp $(BuildFolder)/libmexpr.so.1.0 /usr/local/lib
 	ln -sf /usr/local/lib/libmexpr.so.1.0 /usr/local/lib/libmexpr.so
 	ln -sf /usr/local/lib/libmexpr.so.1.0 /usr/local/lib/libmexpr.so.1
-	cp include/* /usr/local/include
+	cp $(IncludeFolder)/* /usr/local/include
 endif

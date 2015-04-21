@@ -29,17 +29,17 @@
 #define __MExprStdFunc_H__
 
 #ifdef __cplusplus
-	#include <cstddef>
-	#include <stdexcept>
-	#include <MExprDefinitions.h>
-	#include <MExprEnvironment.h>
+#include <cstddef>
+#include <stdexcept>
+#include <MExprDefinitions.h>
+#include <MExprEnvironment.h>
 
 namespace MExpr {
 
-	class StdFunc {
-	public:
-		static void initializeEnv(Environment* env);
-	};
+class StdFunc {
+public:
+    static void initializeEnv(Environment* env);
+};
 
 } //end of namespace MExpr
 

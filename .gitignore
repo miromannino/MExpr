@@ -2,3 +2,5 @@
 .project
 .sconsign.dblite
 .settings
+/Resources/
+/build/

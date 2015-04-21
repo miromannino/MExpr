@@ -30,7 +30,7 @@
 #define __MExprParserParam_H__
 
 #ifndef YY_NO_UNISTD_H
-	#define YY_NO_UNISTD_H 1
+#define YY_NO_UNISTD_H 1
 #endif
 
 #include <MExprTypeParser.h>
@@ -40,12 +40,12 @@
 #include <list>
 
 /** structure given as argument to the reentrant 'yyparse' function */
-typedef struct MExpr_StructParserParam{
-	yyscan_t scanner;
-	MExpr::ASTNode* expression;
-	std::list<MExpr::ASTNode*>* errRecPointerPool; /* Pointer Pool to recover errors */
-	std::list<MExpr::ASTNode*>* funcArgsAccumulator; /* function arguments accumulator */
-	bool errors;
+typedef struct MExpr_StructParserParam {
+    yyscan_t scanner;
+    MExpr::ASTNode* expression;
+    std::list<MExpr::ASTNode*>* errRecPointerPool; /* Pointer Pool to recover errors */
+    std::list<MExpr::ASTNode*>* funcArgsAccumulator; /* function arguments accumulator */
+    bool errors;
 } MExpr_ParserParam;
 
 /**

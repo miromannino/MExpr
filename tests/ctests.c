@@ -14,21 +14,21 @@
 #include <MExpr.h>
 #include <MExprCode.h>
 
-int main(void){
-	//TODO: with the new functions
+int main(void) {
+    //TODO: with the new functions
 
 //while(1){ //check memory leaks
-	char expr[] = "2+3*5+2*(7*8*5)*4+3+2+2+5*6*(9*3*4+6)+6+8+7+8+";
-	printf("C Calculated result: %lf\n", (double)(2+3*5+2*(7*8*5)*4+3+2+2+5*6*(9*3*4+6)+6+8+7+8));
+    char expr[] = "2+3*5+2*(7*8*5)*4+3+2+2+5*6*(9*3*4+6)+6+8+7+8+";
+    printf("C Calculated result: %lf\n", (double) (2 + 3 * 5 + 2 * (7 * 8 * 5) * 4 + 3 + 2 + 2 + 5 * 6 * (9 * 3 * 4 + 6) + 6 + 8 + 7 + 8));
 
-	MExpr* e = mexpr_MExpr_new(expr);
-	printf("MExpr result: %lf\n" , mexpr_MExpr_evaluate(e));
+    MExpr* e = mexpr_MExpr_new(expr);
+    printf("MExpr result: %lf\n", mexpr_MExpr_evaluate(e));
 
-	MExprCode* c = mexpr_MExprCode_new(e);
-	printf("MExpr::Code result: %lf\n" , mexpr_MExprCode_evaluate(c));
-	mexpr_MExprCode_dispose(c);
+    MExprCode* c = mexpr_MExprCode_new(e);
+    printf("MExpr::Code result: %lf\n", mexpr_MExprCode_evaluate(c));
+    mexpr_MExprCode_dispose(c);
 
-	mexpr_MExpr_dispose(e);
+    mexpr_MExpr_dispose(e);
 //}
     return 0;
 }
