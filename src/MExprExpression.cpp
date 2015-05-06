@@ -32,21 +32,6 @@
 using namespace std;
 using namespace MExpr;
 
-extern "C" {
-
-//TODO: C functions
-/*MExpr* mexpr_MExpr_new(const char* expr){
- return new MExpr(expr);
- }
- void mexpr_MExpr_dispose(MExpr* e){
- delete e;
- }
- ValueType mexpr_MExpr_evaluate(MExpr* e){
- return e->evaluate();
- }*/
-
-}
-
 Expression::~Expression() {
     delete expr;
     ast->deleteTree();
@@ -99,25 +84,12 @@ void Expression::setFunction(std::string funcName, FunctionPntrType funcPntr, un
 void Expression::compile() {
     compile(true);
 }
+
 void Expression::compile(bool astOptimization) {
 
     /* check if we need to build the ast */
     if (astOptimization && !optimizedAST) {
-        //TODO:
-
-        //build optimized ast from the current ast
-        //...
-
-        //substitute with the new ast
-        //...
-
-        //we must to destroy the non-optimized code
-        /*
-         if(code != NULL){
-         delete code;
-         code = NULL;
-         }
-         */
+        // TODO: build optimized ast from the current ast
     }
 
     if (code == NULL) {

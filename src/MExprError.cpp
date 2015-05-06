@@ -29,10 +29,6 @@
 using namespace std;
 using namespace MExpr;
 
-extern "C" {
-//TODO: C functions
-}
-
 Error::Error(Error::Type t) {
     this->t = t;
 }

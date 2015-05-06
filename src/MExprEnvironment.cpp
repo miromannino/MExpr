@@ -25,17 +25,11 @@
  *
  */
 
-#include <MExprEnvironment.h>
 #include <map>
 #include <sstream>
-using namespace std;
+#include <MExprEnvironment.h>
 using namespace MExpr;
-
-extern "C" {
-
-//TODO: C functions
-
-}
+using namespace std;
 
 Environment::~Environment() {
     variables->clear();

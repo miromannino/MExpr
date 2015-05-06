@@ -37,10 +37,9 @@
 
 extern MExpr::ASTNode* MExpr_ParseExpression(const std::string* expr) throw(MExpr::Error);
 
-#ifdef __cplusplus
-	#include <cstddef>
-	#include <stdexcept>
-	#include <string>
+#include <cstddef>
+#include <stdexcept>
+#include <string>
 
 namespace MExpr {
 
@@ -62,13 +61,13 @@ namespace MExpr {
 	 *
 	 */
 	class Expression {
+
 	private:
 		std::string* expr; /* expression string */
 		ASTNode* ast; /* expression abstract syntax tree */
 		bool optimizedAST; /* specify if the abstract syntax tree is optimized or not */
 		Code* code; /* compiled expression */
 		Environment* env; /* environment to evaluate the expression */
-
 
 	public:
 		/**
@@ -156,42 +155,5 @@ namespace MExpr {
 
 } //end of namespace MExpr
 
-#else
-
-	//typedef void* MExprExpression;
-
-#endif //of #ifdef __cplusplus
-
-#ifdef __cplusplus
-
-	extern "C" {
-
-#endif
-		//TODO: C functions
-		/**
-		 * It creates a new MExpr. Parses the string and create an abstract syntax tree
-		 * that is the representation of the mathematical expression.
-		 *
-		 * @param expr mathematical expression string
-		 * */
-		//MExpr* mexpr_MExpr_new(const char* expr);
-
-		/**
-		 * Calls the MExpr destroyer
-		 */
-		//void mexpr_MExpr_dispose(MExpr* e);
-
-		/**
-		 * Evaluate the expression using a recursive function that navigate the abstract syntax tree.
-		 *
-		 * @return the result
-		 * */
-		//ValueType mexpr_MExpr_evaluate(MExpr* e);
-
-#ifdef __cplusplus
-
-	}
-
-#endif
 
 #endif

@@ -29,13 +29,13 @@
 #ifndef __MExprError_H__
 #define __MExprError_H__
 
-#ifdef __cplusplus
-	#include <cstddef>
-	#include <stdexcept>
+#include <cstddef>
+#include <stdexcept>
 
 namespace MExpr {
 
 	class Error: public std::exception {
+
 	public:
 
 		enum Type {
@@ -54,24 +54,13 @@ namespace MExpr {
 		Error(Error::Type t);
 		Error::Type getType();
 		const char* what();
+
 	private:
 		Error::Type t;
+
 	};
 
 } //end of namespace MExpr
 
-#endif //of #ifdef __cplusplus
-
-#ifdef __cplusplus
-
-	extern "C" {
-
-#endif
-	//TODO: C functions
-#ifdef __cplusplus
-
-	}
-
-#endif
 
 #endif

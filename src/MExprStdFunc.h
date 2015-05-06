@@ -28,7 +28,6 @@
 #ifndef __MExprStdFunc_H__
 #define __MExprStdFunc_H__
 
-#ifdef __cplusplus
 #include <cstddef>
 #include <stdexcept>
 #include <MExprDefinitions.h>
@@ -42,7 +41,5 @@ public:
 };
 
 } //end of namespace MExpr
-
-#endif //of #ifdef __cplusplus
 
 #endif

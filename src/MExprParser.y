@@ -177,6 +177,7 @@ powNum:
         $$ = new MExpr::ASTVariable($2);
         ((MExpr_ParserParam*)data)->errRecPointerPool->push_back($$);
     }
+    
 ;
 
 power:

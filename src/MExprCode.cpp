@@ -27,16 +27,12 @@
  */
 
 #include <stdio.h>
-#include <MExprCode.h>
 #include <string>
 #include <sstream>
-using namespace MExpr;
+#include <MExprCode.h>
 using namespace std;
+using namespace MExpr;
 
-extern "C" {
-//TODO: C functions
-
-}
 
 Code::Code(ASTNode* exprAST) {
     int i = 0; //shared integer for all functions (called recursively)

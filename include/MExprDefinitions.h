@@ -31,22 +31,22 @@
 
 namespace MExpr {
 
-/** Instruction value type */
-typedef double ValueType;
+    /** Instruction value type */
+    typedef double ValueType;
 
-/** stack type */
-typedef struct {
-	ValueType* stack;
-	unsigned int size;
-	unsigned int stp;
-} StackType;
+    /** stack type */
+    typedef struct {
+        ValueType* stack;
+        unsigned int size;
+        unsigned int stp;
+    } StackType;
 
-/** functions type */
-typedef void (*FunctionPntrType) (StackType*);
-typedef struct {
-	FunctionPntrType fnPntr;
-	unsigned int numArgs;
-}FunctionType;
+    /** functions type */
+    typedef void (*FunctionPntrType)(StackType*);
+    typedef struct {
+        FunctionPntrType fnPntr;
+        unsigned int numArgs;
+    } FunctionType;
 
 } //end of namespace MExpr
 

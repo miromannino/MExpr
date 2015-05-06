@@ -34,27 +34,27 @@
 
 namespace MExpr {
 
-		/** Instruction types */
-		typedef enum StructInstructionType{
-			iVAL, // constant value, like 5, 3, 10, 42
-			iVAR,  // variable like 'x', 'y', 'z'
-			iADD, // '+'
-			iMUL, // '*'
-			iSUB, // '-'
-			iDIV, // '/'
-			iPOW, // '^'
-			iFUN  // functions
-		} InstructionType;
+    /** Instruction types */
+    typedef enum StructInstructionType {
+        iVAL, // constant value, like 5, 3, 10, 42
+        iVAR,  // variable like 'x', 'y', 'z'
+        iADD, // '+'
+        iMUL, // '*'
+        iSUB, // '-'
+        iDIV, // '/'
+        iPOW, // '^'
+        iFUN  // functions
+    } InstructionType;
 
-		/** Instruction structure */
-		typedef struct StructInstr{
-			InstructionType type;
-			union {
-				ValueType value;
-				char variable;
-				std::string* funName;
-			} arg;
-		} Instruction;
+    /** Instruction structure */
+    typedef struct StructInstr {
+        InstructionType type;
+        union {
+            ValueType value;
+            char variable;
+            std::string* funName;
+        } arg;
+    } Instruction;
 
 } //end of namespace MExpr
 

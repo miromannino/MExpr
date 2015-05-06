@@ -29,14 +29,13 @@
 #ifndef __MExprEnvironment_H__
 #define __MExprEnvironment_H__
 
+#include <cstddef>
+#include <stdexcept>
+#include <map>
+#include <string>
+
 #include <MExprDefinitions.h>
 #include <MExprError.h>
-
-#ifdef __cplusplus
-	#include <cstddef>
-	#include <stdexcept>
-	#include <map>
-	#include <string>
 
 namespace MExpr {
 
@@ -45,6 +44,7 @@ namespace MExpr {
 	 *
 	 */
 	class Environment {
+
 	private:
 		std::map<char, ValueType>* variables;
 		std::map<std::string, FunctionType>* functions;
@@ -97,21 +97,5 @@ namespace MExpr {
 
 } //end of namespace MExpr
 
-#endif //of #ifdef __cplusplus
-
-#ifdef __cplusplus
-
-	extern "C" {
-
-#endif
-
-	//TODO: C functions
-//C definitions
-
-#ifdef __cplusplus
-
-	}
-
-#endif
 
 #endif
