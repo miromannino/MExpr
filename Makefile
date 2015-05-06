@@ -60,12 +60,14 @@ BuildTestFolder=$(BuildFolder)/test
 # All
 # ---------------------------------------------------------------------------------------
 
-all: lexer parser libmexpr test
+all: folders libmexpr test
 
 
 # ---------------------------------------------------------------------------------------
 # Out folder
 # ---------------------------------------------------------------------------------------
+
+folders: $(BuildFolder) $(ObjsFolder) $(GenFilesFolder) $(BuildTestFolder)
 
 $(BuildFolder): 
 	if [ ! -d $(BuildFolder) ]; then mkdir $(BuildFolder) ; fi
@@ -76,14 +78,16 @@ $(ObjsFolder): $(BuildFolder)
 $(GenFilesFolder): $(BuildFolder) 
 	if [ ! -d $(GenFilesFolder) ]; then mkdir $(GenFilesFolder) ; fi
 
+$(BuildTestFolder): $(BuildFolder) 
+	if [ ! -d $(BuildTestFolder) ]; then mkdir $(BuildTestFolder) ; fi
 
 # ---------------------------------------------------------------------------------------
 # Lexer
 # ---------------------------------------------------------------------------------------
 
-lexer: $(GenFilesFolder)/MExprLexer.cpp $(GenFilesFolder)/MExprLexer.h
+Lexer=$(GenFilesFolder)/MExprLexer.cpp $(GenFilesFolder)/MExprLexer.h
 
-$(GenFilesFolder)/MExprLexer.cpp $(GenFilesFolder)/MExprLexer.h: $(GenFilesFolder) $(SrcFolder)/MExprLexer.l $(SrcFolder)/MExprTypeParser.h $(GenFilesFolder)/MExprParser.h
+$(GenFilesFolder)/MExprLexer.cpp $(GenFilesFolder)/MExprLexer.h: $(SrcFolder)/MExprLexer.l $(SrcFolder)/MExprTypeParser.h $(GenFilesFolder)/MExprParser.h
 	flex --outfile=$(GenFilesFolder)/MExprLexer.cpp --prefix="MExpr_" --header-file=$(GenFilesFolder)/MExprLexer.h $(SrcFolder)/MExprLexer.l
 
 
@@ -91,9 +95,9 @@ $(GenFilesFolder)/MExprLexer.cpp $(GenFilesFolder)/MExprLexer.h: $(GenFilesFolde
 # Parser
 # ---------------------------------------------------------------------------------------
 
-parser: $(GenFilesFolder)/MExprParser.cpp $(GenFilesFolder)/MExprParser.h
+Parser=$(GenFilesFolder)/MExprParser.cpp $(GenFilesFolder)/MExprParser.h
 
-$(GenFilesFolder)/MExprParser.cpp $(GenFilesFolder)/MExprParser.h: $(GenFilesFolder) $(SrcFolder)/MExprParser.y $(SrcFolder)/MExprParserParam.h $(SrcFolder)/MExprTypeParser.h
+$(GenFilesFolder)/MExprParser.cpp $(GenFilesFolder)/MExprParser.h: $(SrcFolder)/MExprParser.y $(SrcFolder)/MExprParserParam.h $(SrcFolder)/MExprTypeParser.h
 	bison --output=$(GenFilesFolder)/MExprParser.cpp --name-prefix="MExpr_" --defines=$(GenFilesFolder)/MExprParser.h $(SrcFolder)/MExprParser.y
 
 
@@ -101,7 +105,7 @@ $(GenFilesFolder)/MExprParser.cpp $(GenFilesFolder)/MExprParser.h: $(GenFilesFol
 # Library
 # ---------------------------------------------------------------------------------------
 
-libmexpr: $(BuildFolder)/libmexpr.a $(BuildFolder)/libmexpr.so
+libmexpr: $(BuildFolder)/libmexpr.a
 
 Objs= $(ObjsFolder)/MExprStdFunc.o \
 	  $(ObjsFolder)/MExprError.o \
@@ -112,7 +116,7 @@ Objs= $(ObjsFolder)/MExprStdFunc.o \
 	  $(ObjsFolder)/MExprCode.o \
 	  $(ObjsFolder)/MExprEnvironment.o
 	  
-$(BuildFolder)/libmexpr.so: $(BuildFolder) $(Objs)
+$(BuildFolder)/libmexpr.so: $(Objs)
 ifeq ($(OperatingSystem), MacOS)	
 	g++ -lm -dynamiclib -o libmexpr.so $(Objs)
 	mv libmexpr.so $(BuildFolder)/ 
@@ -124,33 +128,33 @@ else
 	mv libmexpr.so.1 $(BuildFolder)/
 endif
 
-$(BuildFolder)/libmexpr.a: $(BuildFolder) $(Objs)
+$(BuildFolder)/libmexpr.a: $(Objs)
 	ar -rv $(BuildFolder)/libmexpr.a $(Objs)
 
 Includes=-Isrc -Iinclude -I$(GenFilesFolder)
 
-$(ObjsFolder)/MExprEnvironment.o: $(ObjsFolder) $(SrcFolder)/MExprEnvironment.cpp $(IncludeFolder)/MExprEnvironment.h
+$(ObjsFolder)/MExprEnvironment.o: $(SrcFolder)/MExprEnvironment.cpp $(IncludeFolder)/MExprEnvironment.h
 	g++ -c $(Includes) -O2 -o $(ObjsFolder)/MExprEnvironment.o $(SrcFolder)/MExprEnvironment.cpp
 
-$(ObjsFolder)/MExprExpression.o: $(ObjsFolder) $(SrcFolder)/MExprExpression.cpp $(IncludeFolder)/MExprExpression.h $(IncludeFolder)/MExprInstruction.h $(SrcFolder)/MExprStdFunc.h
+$(ObjsFolder)/MExprExpression.o: $(SrcFolder)/MExprExpression.cpp $(IncludeFolder)/MExprExpression.h $(IncludeFolder)/MExprInstruction.h $(SrcFolder)/MExprStdFunc.h
 	g++ -c $(Includes) -O2 -o $(ObjsFolder)/MExprExpression.o $(SrcFolder)/MExprExpression.cpp
 
-$(ObjsFolder)/MExprError.o: $(ObjsFolder) $(SrcFolder)/MExprError.cpp $(IncludeFolder)/MExprError.h
+$(ObjsFolder)/MExprError.o: $(SrcFolder)/MExprError.cpp $(IncludeFolder)/MExprError.h
 	g++ -c $(Includes) -O2 -o $(ObjsFolder)/MExprError.o $(SrcFolder)/MExprError.cpp
 
-$(ObjsFolder)/MExprStdFunc.o: $(ObjsFolder) $(SrcFolder)/MExprStdFunc.cpp $(SrcFolder)/MExprStdFunc.h
+$(ObjsFolder)/MExprStdFunc.o: $(SrcFolder)/MExprStdFunc.cpp $(SrcFolder)/MExprStdFunc.h
 	g++ -c $(Includes) -O2 -o $(ObjsFolder)/MExprStdFunc.o $(SrcFolder)/MExprStdFunc.cpp
 
-$(ObjsFolder)/MExprAST.o: $(ObjsFolder) $(SrcFolder)/MExprAST.cpp $(IncludeFolder)/MExprAST.h
+$(ObjsFolder)/MExprAST.o: $(SrcFolder)/MExprAST.cpp $(IncludeFolder)/MExprAST.h
 	g++ -c $(Includes) -O2 -o $(ObjsFolder)/MExprAST.o $(SrcFolder)/MExprAST.cpp
 
-$(ObjsFolder)/MExprCode.o: $(ObjsFolder) $(SrcFolder)/MExprCode.cpp $(IncludeFolder)/MExprCode.h
+$(ObjsFolder)/MExprCode.o: $(SrcFolder)/MExprCode.cpp $(IncludeFolder)/MExprCode.h
 	g++ -c $(Includes) -O2 -o $(ObjsFolder)/MExprCode.o $(SrcFolder)/MExprCode.cpp
 
-$(ObjsFolder)/MExprLexer.o: lexer
+$(ObjsFolder)/MExprLexer.o: $(Lexer)
 	g++ -c $(Includes) -O2 -o $(ObjsFolder)/MExprLexer.o $(GenFilesFolder)/MExprLexer.cpp
 
-$(ObjsFolder)/MExprParser.o: parser
+$(ObjsFolder)/MExprParser.o: $(Parser)
 	g++ -c $(Includes) -O2 -o $(ObjsFolder)/MExprParser.o $(GenFilesFolder)/MExprParser.cpp
 
 
@@ -158,10 +162,7 @@ $(ObjsFolder)/MExprParser.o: parser
 # Tests
 # ---------------------------------------------------------------------------------------
 
-test: $(BuildFolder) $(ObjsFolder) $(BuildTestFolder) $(BuildTestFolder)/libgtest.a $(BuildTestFolder)/tests $(BuildTestFolder)/performances run-tests
-
-$(BuildTestFolder):
-	mkdir $(BuildTestFolder)
+test: $(BuildTestFolder)/libgtest.a $(BuildTestFolder)/tests $(BuildTestFolder)/performances
 
 GTestVersion=gtest-1.7.0
 
@@ -177,14 +178,11 @@ $(BuildTestFolder)/libgtest.a: gtest
 
 TestIncludes=-I $(IncludeFolder) -I gtest/include
 
-$(BuildTestFolder)/tests:
+$(BuildTestFolder)/tests: $(TestsFolder)/tests.cpp
 	g++ $(TestIncludes) $(TestsFolder)/tests.cpp $(BuildTestFolder)/libgtest.a $(BuildFolder)/libmexpr.a -lpthread -o $(BuildTestFolder)/tests
 
-$(BuildTestFolder)/performances: $(BuildTestFolder) $(ObjsFolder)/performances.o
-	g++ $(TestIncludes) $(BuildFolder)/libmexpr.a -o $(BuildTestFolder)/performances $(ObjsFolder)/performances.o
-
-$(ObjsFolder)/performances.o : $(TestsFolder)/performances.cpp
-	g++ -c $(TestIncludes) -o $(ObjsFolder)/performances.o $(TestsFolder)/performances.cpp
+$(BuildTestFolder)/performances: $(TestsFolder)/performances.cpp
+	g++ $(TestIncludes) $(TestsFolder)/performances.cpp $(BuildFolder)/libmexpr.a -o $(BuildTestFolder)/performances
 	
 run-tests:
 	$(BuildTestFolder)/tests
