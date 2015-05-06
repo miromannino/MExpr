@@ -162,7 +162,12 @@ $(ObjsFolder)/MExprParser.o: $(Parser)
 # Tests
 # ---------------------------------------------------------------------------------------
 
-test: $(BuildTestFolder)/libgtest.a $(BuildTestFolder)/tests $(BuildTestFolder)/performances
+test: $(BuildTestFolder)/libgtest.a $(BuildTestFolder)/tests \
+	  $(BuildTestFolder)/performances \
+	  $(BuildTestFolder)/example1 \
+	  $(BuildTestFolder)/example2 \
+	  $(BuildTestFolder)/example3 \
+	  $(BuildTestFolder)/example4 
 
 GTestVersion=gtest-1.7.0
 
@@ -182,12 +187,23 @@ $(BuildTestFolder)/tests: $(TestsFolder)/tests.cpp
 	g++ $(TestIncludes) $(TestsFolder)/tests.cpp $(BuildTestFolder)/libgtest.a $(BuildFolder)/libmexpr.a -lpthread -o $(BuildTestFolder)/tests
 
 $(BuildTestFolder)/performances: $(TestsFolder)/performances.cpp
-	g++ $(TestIncludes) $(TestsFolder)/performances.cpp $(BuildFolder)/libmexpr.a -o $(BuildTestFolder)/performances
+	g++ -I $(IncludeFolder) $(TestsFolder)/performances.cpp $(BuildFolder)/libmexpr.a -o $(BuildTestFolder)/performances
+
+$(BuildTestFolder)/example1: $(TestsFolder)/example1.cpp
+	g++ -I $(IncludeFolder) $(TestsFolder)/example1.cpp $(BuildFolder)/libmexpr.a -o $(BuildTestFolder)/example1
+
+$(BuildTestFolder)/example2: $(TestsFolder)/example2.cpp
+	g++ -I $(IncludeFolder) $(TestsFolder)/example2.cpp $(BuildFolder)/libmexpr.a -o $(BuildTestFolder)/example2
+
+$(BuildTestFolder)/example3: $(TestsFolder)/example3.cpp
+	g++ -I $(IncludeFolder) $(TestsFolder)/example3.cpp $(BuildFolder)/libmexpr.a -o $(BuildTestFolder)/example3
+
+$(BuildTestFolder)/example4: $(TestsFolder)/example4.cpp
+	g++ -I $(IncludeFolder) $(TestsFolder)/example4.cpp $(BuildFolder)/libmexpr.a -o $(BuildTestFolder)/example4
 	
 run-tests:
 	$(BuildTestFolder)/tests
 	$(BuildTestFolder)/performances
-
 
 # ---------------------------------------------------------------------------------------
 # Clean
