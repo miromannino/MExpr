@@ -46,7 +46,10 @@ SrcFolder=src
 IncludeFolder=include
 
 # Tests folder
-TestsFolder=tests
+TestsFolder=test
+
+# Build test folder
+BuildTestFolder=$(BuildFolder)/test
 
 
 
@@ -57,7 +60,7 @@ TestsFolder=tests
 # All
 # ---------------------------------------------------------------------------------------
 
-all: lexer parser libmexpr tests
+all: lexer parser libmexpr test
 
 
 # ---------------------------------------------------------------------------------------
@@ -98,7 +101,7 @@ $(GenFilesFolder)/MExprParser.cpp $(GenFilesFolder)/MExprParser.h: $(GenFilesFol
 # Library
 # ---------------------------------------------------------------------------------------
 
-libmexpr: $(BuildFolder)/libmexpr.so
+libmexpr: $(BuildFolder)/libmexpr.a $(BuildFolder)/libmexpr.so
 
 Objs= $(ObjsFolder)/MExprStdFunc.o \
 	  $(ObjsFolder)/MExprError.o \
@@ -108,7 +111,7 @@ Objs= $(ObjsFolder)/MExprStdFunc.o \
 	  $(ObjsFolder)/MExprExpression.o \
 	  $(ObjsFolder)/MExprCode.o \
 	  $(ObjsFolder)/MExprEnvironment.o
-
+	  
 $(BuildFolder)/libmexpr.so: $(BuildFolder) $(Objs)
 ifeq ($(OperatingSystem), MacOS)	
 	g++ -lm -dynamiclib -o libmexpr.so $(Objs)
@@ -120,6 +123,9 @@ else
 	mv libmexpr.so $(BuildFolder)/
 	mv libmexpr.so.1 $(BuildFolder)/
 endif
+
+$(BuildFolder)/libmexpr.a: $(BuildFolder) $(Objs)
+	ar -rv $(BuildFolder)/libmexpr.a $(Objs)
 
 Includes=-Isrc -Iinclude -I$(GenFilesFolder)
 
@@ -152,21 +158,37 @@ $(ObjsFolder)/MExprParser.o: parser
 # Tests
 # ---------------------------------------------------------------------------------------
 
-tests: $(BuildFolder)/test1 $(BuildFolder)/test2
+test: $(BuildFolder) $(ObjsFolder) $(BuildTestFolder) $(BuildTestFolder)/libgtest.a $(BuildTestFolder)/tests $(BuildTestFolder)/performances run-tests
 
-TestIncludes=-Iinclude
+$(BuildTestFolder):
+	mkdir $(BuildTestFolder)
 
-$(BuildFolder)/test1: $(ObjsFolder)/test1.o
-	g++ $(TestIncludes) -L$(BuildFolder) -lmexpr -o $(BuildFolder)/test1 $(ObjsFolder)/test1.o 
+GTestVersion=gtest-1.7.0
 
-$(ObjsFolder)/test1.o : $(TestsFolder)/test1.cpp
-	g++ -c $(TestIncludes) -o $(ObjsFolder)/test1.o $(TestsFolder)/test1.cpp
+gtest:
+	wget http://googletest.googlecode.com/files/$(GTestVersion).zip
+	unzip $(GTestVersion).zip
+	mv $(GTestVersion) gtest
+	rm -f $(GTestVersion).zip
 
-$(BuildFolder)/test2: $(ObjsFolder)/test2.o
-	g++ $(TestIncludes) -L$(BuildFolder) -lmexpr -o $(BuildFolder)/test2 $(ObjsFolder)/test2.o 
+$(BuildTestFolder)/libgtest.a: gtest
+	g++ -I gtest/include -I gtest -c gtest/src/gtest-all.cc -o $(ObjsFolder)/gtest-all.o
+	ar -rv $(BuildTestFolder)/libgtest.a $(ObjsFolder)/gtest-all.o
 
-$(ObjsFolder)/test2.o : $(TestsFolder)/test2.cpp
-	g++ -c $(TestIncludes) -o $(ObjsFolder)/test2.o $(TestsFolder)/test2.cpp
+TestIncludes=-I $(IncludeFolder) -I gtest/include
+
+$(BuildTestFolder)/tests:
+	g++ $(TestIncludes) $(TestsFolder)/tests.cpp $(BuildTestFolder)/libgtest.a $(BuildFolder)/libmexpr.a -lpthread -o $(BuildTestFolder)/tests
+
+$(BuildTestFolder)/performances: $(BuildTestFolder) $(ObjsFolder)/performances.o
+	g++ $(TestIncludes) $(BuildFolder)/libmexpr.a -o $(BuildTestFolder)/performances $(ObjsFolder)/performances.o
+
+$(ObjsFolder)/performances.o : $(TestsFolder)/performances.cpp
+	g++ -c $(TestIncludes) -o $(ObjsFolder)/performances.o $(TestsFolder)/performances.cpp
+	
+run-tests:
+	$(BuildTestFolder)/tests
+	$(BuildTestFolder)/performances
 
 
 # ---------------------------------------------------------------------------------------
@@ -175,13 +197,16 @@ $(ObjsFolder)/test2.o : $(TestsFolder)/test2.cpp
 
 clean:
 	rm -rf $(BuildFolder)
+	
+clean-gtest:
+	rm -rf gtest
 
 
 # ---------------------------------------------------------------------------------------
 # Install
 # ---------------------------------------------------------------------------------------
 
-install: $(Objs)
+install: $(BuildFolder)/libmexpr.so
 ifeq ($(OperatingSystem), MacOS)
 	cp $(BuildFolder)/libmexpr.so /usr/local/lib/
 	cp $(IncludeFolder)/* /usr/local/include

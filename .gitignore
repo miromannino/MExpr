@@ -4,3 +4,4 @@
 .settings
 /Resources/
 /build/
+/gtest/
