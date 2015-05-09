@@ -8,9 +8,9 @@ To understand better, let's make some examples comparing them to the more tradit
 
 <table class="table">
 	<tr><th>MExpr notation</th><th>Traditional computer-like notation</th></tr>
-	<tr><td>3xy</td><td>3 \* x \* y</td></tr>
-	<tr><td>-3(x + y)</td><td>-3 \* (x + y)</td></tr>
-	<tr><td>(x + y)(x + 4)</td><td>(x + y) \* (x + 4)</td></tr>
+	<tr><td>3xy</td><td>3 * x * y</td></tr>
+	<tr><td>-3(x + y)</td><td>-3 * (x + y)</td></tr>
+	<tr><td>(x + y)(x + 4)</td><td>(x + y) * (x + 4)</td></tr>
 </table>
 
 
