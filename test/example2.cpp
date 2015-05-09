@@ -25,9 +25,9 @@
  *
  */
 
-#include <stdio.h>
 #include <iostream>
 #include <MExpr.h>
+
 using namespace std;
 using namespace MExpr;
 
@@ -36,10 +36,10 @@ int main(void) {
     e->compile(); //To allow a faster evaluations (e.g. to draw a plot)
 
     for (int i = 0; i < 10; i++) {
-		e->setVariable('x', i);
-		cout << e->evaluate() << ' ';
-	}
-	cout << endl;
+        e->setVariable('x', i);
+        cout << e->evaluate() << ' ';
+    }
+    cout << endl;
 
     return 0;
 }

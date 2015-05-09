@@ -25,9 +25,9 @@
  *
  */
 
-#include <stdio.h>
 #include <iostream>
 #include <MExpr.h>
+
 using namespace std;
 using namespace MExpr;
 

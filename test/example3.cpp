@@ -1,6 +1,6 @@
 /*
  * MExpr C++ Example 3
- *
+ * 
  * @author Miro Mannino
  *
  * Copyright (c) 2012 Miro Mannino
@@ -25,9 +25,9 @@
  *
  */
 
-#include <stdio.h>
 #include <iostream>
 #include <MExpr.h>
+
 using namespace std;
 using namespace MExpr;
 
@@ -43,8 +43,8 @@ int main(void) {
 
     cout << endl << "Compiled expression: " << endl;
     s = e->getExprCodeString();
-	cout << *s;
-	delete s;
+    cout << *s;
+    delete s;
 
     return 0;
 }

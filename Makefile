@@ -81,6 +81,7 @@ $(GenFilesFolder): $(BuildFolder)
 $(BuildTestFolder): $(BuildFolder) 
 	if [ ! -d $(BuildTestFolder) ]; then mkdir $(BuildTestFolder) ; fi
 
+
 # ---------------------------------------------------------------------------------------
 # Lexer
 # ---------------------------------------------------------------------------------------
@@ -204,6 +205,7 @@ $(BuildTestFolder)/example4: $(TestsFolder)/example4.cpp
 run-tests:
 	$(BuildTestFolder)/tests
 	$(BuildTestFolder)/performances
+
 
 # ---------------------------------------------------------------------------------------
 # Clean

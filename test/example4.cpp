@@ -25,13 +25,14 @@
  *
  */
 
-#include <stdio.h>
 #include <iostream>
 #include <MExpr.h>
+ 
 using namespace std;
 using namespace MExpr;
 
-void myDiv(MExpr::StackType* s) { //myDiv(a,b) = a/b
+// myDiv(a, b) = a / b
+void myDiv(MExpr::StackType* s) {
     MExpr::ValueType arg1, arg2;
     arg1 = s->stack[s->stp - 2];
     arg2 = s->stack[s->stp - 1];
@@ -43,7 +44,7 @@ int main(void) {
     Expression* e = new Expression("_div(16,4)");
     e->setFunction("_div", &myDiv, 2);
 
-	cout << e->evaluate() << endl;
+    cout << e->evaluate() << endl;
 
     return 0;
 }
