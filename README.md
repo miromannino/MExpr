@@ -1,8 +1,8 @@
 # MExpr
 
-C++ library that parses human-like arithmetic expressions like the following:
+C++ library which parses human-like arithmetic expressions like the following:
 
-	-3xy^2 - 3(_sum(1,2) + _sum(1,2,3))(-5x)
+	-3xy^2 - 3(xy + 3)(-5x + y)
 
 To understand better, let's make some examples comparing them to the more traditional computer-like notation:
 
